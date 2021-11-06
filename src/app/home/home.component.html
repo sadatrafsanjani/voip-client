@@ -4,18 +4,15 @@
     <h1>Hello</h1>
     <button class="btn btn-primary" (click)="initiateCall()">Call</button>
     <div class="row mt-3">
-      <div class="col-4 text-center" style="width:137px;height:82px">
-        <video id="video-preview" class="w-100 h-100"
-               style="max-width:137px;max-height:82px;border-radius:8px"></video>
-
-        <video id="video-preview-remote" class="w-100 h-100"
-               style="max-width:137px;max-height:82px;border-radius:8px"></video>
+      <div class="col-lg-6 text-center border-1">
+        <video id="video-preview-self" class="w-100 h-100" style="border-radius:8px"></video>
+      </div>
+      <div class="col-lg-6 text-center border-1">
+        <video id="video-preview-remote" class="w-100 h-100" style="border-radius:8px"></video>
       </div>
     </div>
   </div>
 </div>
-
-
 
 <ngx-spinner
   bdColor="rgba(51,51,51,0.8)"
@@ -23,5 +20,5 @@
   color="#fff"
   type="ball-scale-multiple"
 >
-  <p style="font-size: 20px; color: white">Loading...</p>
+  <p style="font-size: 20px; color: white">Call in progress...</p>
 </ngx-spinner>

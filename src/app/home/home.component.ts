@@ -69,7 +69,6 @@ export class HomeComponent implements OnInit {
     const meetingResponse = response.JoinInfo.Meeting;
     const attendeeResponse = response.JoinInfo.Attendee;
     const configuration = new MeetingSessionConfiguration(meetingResponse, attendeeResponse);
-
     const meetingSession = new DefaultMeetingSession(configuration, logger, deviceController);
 
     const audioInputDevices = await meetingSession.audioVideo.listAudioInputDevices();
@@ -89,16 +88,24 @@ export class HomeComponent implements OnInit {
     const videoInputDeviceInfo = videoInputDevices[0];
     await meetingSession.audioVideo.chooseVideoInputDevice(videoInputDeviceInfo.deviceId);
 
-    const videoElement = document.getElementById('video-preview') as HTMLVideoElement;
-    const videoElementRemote = document.getElementById('video-preview-remote') as HTMLVideoElement;
+    const videoElement = document.getElementById('video-preview-self') as HTMLVideoElement;
     meetingSession.audioVideo.bindVideoElement(0, videoElement);
-    meetingSession.audioVideo.bindVideoElement(1, videoElementRemote);
     meetingSession.audioVideo.startVideoPreviewForVideoInput(videoElement);
     meetingSession.audioVideo.startLocalVideoTile();
     meetingSession.audioVideo.start();
 
+    const videoElementRemote = document.getElementById('video-preview-remote') as HTMLVideoElement;
+
+    const observer = {
+      videoTileDidUpdate: tileState => {
+        if (!tileState.boundAttendeeId || tileState.localTile || tileState.isContent) {
+          return;
+        }
+
+        meetingSession.audioVideo.bindVideoElement(2, videoElementRemote);
+      }
+    };
+
+    meetingSession.audioVideo.addObserver(observer);
   }
-
-
-
 }
