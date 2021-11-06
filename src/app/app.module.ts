@@ -21,7 +21,12 @@ import {HttpClientModule} from "@angular/common/http";
     HttpClientModule,
     NgxSpinnerModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot({
+        timeOut: 1000,
+        positionClass: 'toast-bottom-right',
+        preventDuplicates: true,
+      }
+    )
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],

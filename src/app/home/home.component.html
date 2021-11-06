@@ -1,14 +1,20 @@
 
 <div class="container">
   <div class="col-lg-12">
-    <h1>Hello</h1>
+    <h1>Video Call</h1>
+
     <button class="btn btn-primary" (click)="initiateCall()">Call</button>
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#callModal">
+      Launch demo modal
+    </button>
+
     <div class="row mt-3">
       <div class="col-lg-6 text-center border-1">
-        <video id="video-preview-self" class="w-100 h-100" style="border-radius:8px"></video>
+        <video id="video-preview-self" class="w-100 h-100"></video>
       </div>
       <div class="col-lg-6 text-center border-1">
-        <video id="video-preview-remote" class="w-100 h-100" style="border-radius:8px"></video>
+        <video id="video-preview-remote" class="w-100 h-100"></video>
       </div>
     </div>
   </div>
@@ -22,3 +28,22 @@
 >
   <p style="font-size: 20px; color: white">Call in progress...</p>
 </ngx-spinner>
+
+
+<div class="modal fade" id="callModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="callModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Video Call</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Reject</button>
+        <button type="button" class="btn btn-success">Accept</button>
+      </div>
+    </div>
+  </div>
+</div>

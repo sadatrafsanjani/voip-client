@@ -4,17 +4,8 @@ import {MeetingPayload} from "../dto/payload/meeting-payload";
 import {ToastrService} from "ngx-toastr";
 import {NgxSpinnerService} from "ngx-spinner";
 import {MeetingResponse} from "../dto/response/meeting-response";
-
-import {
-  AudioVideoObserver,
-  ConsoleLogger,
-  DefaultDeviceController,
-  DefaultMeetingSession,
-  LogLevel,
-  MeetingSessionConfiguration,
-  MeetingSessionCredentials, VideoTileState
-} from 'amazon-chime-sdk-js';
-import MeetingSessionURLs from "amazon-chime-sdk-js/build/meetingsession/MeetingSessionURLs";
+import {ConsoleLogger, DefaultDeviceController, DefaultMeetingSession, LogLevel, MeetingSessionConfiguration} from 'amazon-chime-sdk-js';
+declare var $: any;
 
 @Component({
   selector: 'app-home',
@@ -35,6 +26,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
   }
 
   initiateCall(){
@@ -47,21 +39,19 @@ export class HomeComponent implements OnInit {
     this.meetingService.initiateMeeting(this.meetingPayload).subscribe(
       async response => {
 
-        await this.spinner.hide();
+        this.spinner.hide().then();
 
         if(response.body != null){
           await this.initiateDeviceControls(response.body);
         }
       },
         error => {
-          this.spinner.hide();
+          this.spinner.hide().then();
       }
     );
   }
 
   private async initiateDeviceControls(response: MeetingResponse) {
-
-    console.log(response);
 
     const logger = new ConsoleLogger('Logger', LogLevel.INFO);
     const deviceController = new DefaultDeviceController(logger);
@@ -75,9 +65,9 @@ export class HomeComponent implements OnInit {
     const audioOutputDevices = await meetingSession.audioVideo.listAudioOutputDevices();
     const videoInputDevices = await meetingSession.audioVideo.listVideoInputDevices();
 
-    audioOutputDevices.forEach(mediaDeviceInfo => {
-      console.log(`Audio Output Device ID: ${mediaDeviceInfo.deviceId} Microphone: ${mediaDeviceInfo.label}`);
-    });
+    // audioOutputDevices.forEach(mediaDeviceInfo => {
+    //   console.log(`Audio Output Device ID: ${mediaDeviceInfo.deviceId} Microphone: ${mediaDeviceInfo.label}`);
+    // });
 
     const audioInputDeviceInfo = audioInputDevices[0];
     await meetingSession.audioVideo.chooseAudioInputDevice(audioInputDeviceInfo.deviceId);
@@ -103,9 +93,20 @@ export class HomeComponent implements OnInit {
         }
 
         meetingSession.audioVideo.bindVideoElement(2, videoElementRemote);
+        this.toastr.success("Video Call Started!");
       }
     };
 
     meetingSession.audioVideo.addObserver(observer);
+  }
+
+  private openCallModal() {
+
+    $("#callModal").modal('show');
+  }
+
+  private closeCallModal() {
+
+    $("#callModal").modal('hide');
   }
 }
