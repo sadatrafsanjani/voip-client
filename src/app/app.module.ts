@@ -6,14 +6,12 @@ import { HomeComponent } from './home/home.component';
 import {NgxSpinnerModule} from "ngx-spinner";
 import {ToastrModule} from "ngx-toastr";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import { MeetingComponent } from './meeting/meeting.component';
 import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
-    MeetingComponent
+    HomeComponent
   ],
   imports: [
     BrowserModule,

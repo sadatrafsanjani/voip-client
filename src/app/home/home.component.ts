@@ -14,7 +14,7 @@ declare var $: any;
 })
 export class HomeComponent implements OnInit {
 
-  meetingPayload!: MeetingPayload;
+  private meetingPayload!: MeetingPayload;
 
   constructor(private meetingService: MeetingService,
               private toastr: ToastrService,
@@ -78,9 +78,9 @@ export class HomeComponent implements OnInit {
     const videoInputDeviceInfo = videoInputDevices[0];
     await meetingSession.audioVideo.chooseVideoInputDevice(videoInputDeviceInfo.deviceId);
 
-    const videoElement = document.getElementById('video-preview-self') as HTMLVideoElement;
-    meetingSession.audioVideo.bindVideoElement(0, videoElement);
-    meetingSession.audioVideo.startVideoPreviewForVideoInput(videoElement);
+    const videoElementSelf = document.getElementById('video-preview-self') as HTMLVideoElement;
+    meetingSession.audioVideo.bindVideoElement(0, videoElementSelf);
+    meetingSession.audioVideo.startVideoPreviewForVideoInput(videoElementSelf);
     meetingSession.audioVideo.startLocalVideoTile();
     meetingSession.audioVideo.start();
 
