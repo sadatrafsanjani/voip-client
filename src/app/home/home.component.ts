@@ -15,6 +15,8 @@ declare var $: any;
 export class HomeComponent implements OnInit {
 
   private meetingPayload!: MeetingPayload;
+  private callSession: any;
+  private audio: any;
 
   constructor(private meetingService: MeetingService,
               private toastr: ToastrService,
@@ -27,11 +29,15 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.audio = new Audio();
+    this.audio.src = "../../assets/audio/dialer-tone.wav";
+    this.audio.load();
   }
 
   initiateCall(){
 
     this.spinner.show();
+    this.playDialerTone();
 
     this.meetingPayload.meetingId = "test";
     this.meetingPayload.attendeeName = "doctor";
@@ -39,14 +45,14 @@ export class HomeComponent implements OnInit {
     this.meetingService.initiateMeeting(this.meetingPayload).subscribe(
       async response => {
 
-        this.spinner.hide().then();
+        this.spinner.hide();
 
         if(response.body != null){
           await this.initiateDeviceControls(response.body);
         }
       },
         error => {
-          this.spinner.hide().then();
+          this.spinner.hide();
       }
     );
   }
@@ -65,26 +71,25 @@ export class HomeComponent implements OnInit {
     const audioOutputDevices = await meetingSession.audioVideo.listAudioOutputDevices();
     const videoInputDevices = await meetingSession.audioVideo.listVideoInputDevices();
 
-    // audioOutputDevices.forEach(mediaDeviceInfo => {
-    //   console.log(`Audio Output Device ID: ${mediaDeviceInfo.deviceId} Microphone: ${mediaDeviceInfo.label}`);
-    // });
-
     const audioInputDeviceInfo = audioInputDevices[0];
-    await meetingSession.audioVideo.chooseAudioInputDevice(audioInputDeviceInfo.deviceId);
+
+    this.callSession = meetingSession.audioVideo;
+
+    await this.callSession.chooseAudioInputDevice(audioInputDeviceInfo.deviceId);
 
     const audioOutputDeviceInfo = audioOutputDevices[0];
-    await meetingSession.audioVideo.chooseAudioOutputDevice(audioOutputDeviceInfo.deviceId);
+    await this.callSession.chooseAudioOutputDevice(audioOutputDeviceInfo.deviceId);
 
     const videoInputDeviceInfo = videoInputDevices[0];
-    await meetingSession.audioVideo.chooseVideoInputDevice(videoInputDeviceInfo.deviceId);
+    await this.callSession.chooseVideoInputDevice(videoInputDeviceInfo.deviceId);
 
     const videoElementSelf = document.getElementById('video-preview-self') as HTMLVideoElement;
-    meetingSession.audioVideo.bindVideoElement(0, videoElementSelf);
-    meetingSession.audioVideo.startVideoPreviewForVideoInput(videoElementSelf);
-    meetingSession.audioVideo.startLocalVideoTile();
-    meetingSession.audioVideo.start();
-
     const videoElementRemote = document.getElementById('video-preview-remote') as HTMLVideoElement;
+
+    this.callSession.bindVideoElement(0, videoElementSelf);
+    this.callSession.startVideoPreviewForVideoInput(videoElementSelf);
+    this.callSession.startLocalVideoTile();
+    this.callSession.start();
 
     const observer = {
       videoTileDidUpdate: tileState => {
@@ -92,12 +97,13 @@ export class HomeComponent implements OnInit {
           return;
         }
 
-        meetingSession.audioVideo.bindVideoElement(2, videoElementRemote);
+        this.callSession.bindVideoElement(2, videoElementRemote);
         this.toastr.success("Video Call Started!");
+        this.stopDialerTone();
       }
     };
 
-    meetingSession.audioVideo.addObserver(observer);
+    this.callSession.addObserver(observer);
   }
 
   private openCallModal() {
@@ -108,5 +114,15 @@ export class HomeComponent implements OnInit {
   private closeCallModal() {
 
     $("#callModal").modal('hide');
+  }
+
+  private playDialerTone(){
+
+    this.audio.play();
+  }
+
+  private stopDialerTone(){
+
+    this.audio.pause();
   }
 }

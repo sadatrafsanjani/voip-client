@@ -20,9 +20,9 @@ import {HttpClientModule} from "@angular/common/http";
     NgxSpinnerModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot({
-        timeOut: 1000,
+        timeOut: 3000,
         positionClass: 'toast-bottom-right',
-        preventDuplicates: true,
+        preventDuplicates: true
       }
     )
   ],
