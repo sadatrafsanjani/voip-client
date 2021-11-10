@@ -36,6 +36,10 @@ export class HomeComponent implements OnInit {
     this.initiateDialerTone();
   }
 
+  openCallingWindow() {
+    window.open('/call', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+  }
+
   initiateCall(){
 
     this.spinner.show();
