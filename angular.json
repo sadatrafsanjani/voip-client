@@ -37,8 +37,7 @@
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ],
             "allowedCommonJsDependencies": [
-              "lodash",
-              "rxjs-compat"
+              "amazon-chime-sdk-js"
             ]
           },
           "configurations": {

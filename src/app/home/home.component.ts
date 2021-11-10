@@ -6,7 +6,7 @@ import {NgxSpinnerService} from "ngx-spinner";
 import {MeetingResponse} from "../dto/response/meeting-response";
 import {ConsoleLogger, DefaultDeviceController, DefaultMeetingSession, LogLevel, MeetingSessionConfiguration} from 'amazon-chime-sdk-js';
 import {environment} from "../../environments/environment";
-import {Howl, Howler} from 'howler';
+import {Howl} from 'howler';
 declare var $: any;
 
 @Component({
@@ -124,7 +124,7 @@ export class HomeComponent implements OnInit {
 
     this.dialerAudio = new Howl({
       src: [environment.DIALER_TONE_PATH],
-      autoplay: true,
+      autoplay: false,
       loop: true,
       volume: 0.5
     });
