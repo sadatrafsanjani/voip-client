@@ -18,6 +18,6 @@ export class MeetingService {
 
   initiateMeeting(payload: MeetingPayload): Observable<any>{
 
-    return this.http.post<MeetingResponse>(this.url + '/join', payload, {observe: 'response'});
+    return this.http.post<MeetingResponse>(this.url + '/call', payload, {observe: 'response'});
   }
 }

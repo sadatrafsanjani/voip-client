@@ -5,6 +5,7 @@ import {ToastrService} from "ngx-toastr";
 import {NgxSpinnerService} from "ngx-spinner";
 import {MeetingResponse} from "../dto/response/meeting-response";
 import {ConsoleLogger, DefaultDeviceController, DefaultMeetingSession, LogLevel, MeetingSessionConfiguration} from 'amazon-chime-sdk-js';
+import {environment} from "../../environments/environment";
 declare var $: any;
 
 @Component({
@@ -16,22 +17,22 @@ export class HomeComponent implements OnInit {
 
   private meetingPayload!: MeetingPayload;
   private callSession: any;
-  private audio: any;
+  private dialerAudio: any;
+  private ringerAudio: any;
 
   constructor(private meetingService: MeetingService,
               private toastr: ToastrService,
               private spinner: NgxSpinnerService) {
     this.meetingPayload = {
       meetingId: '',
-      attendeeName: ''
+      attendeeName: '',
+      client: ''
     };
   }
 
   ngOnInit(): void {
 
-    this.audio = new Audio();
-    this.audio.src = "../../assets/audio/dialer-tone.wav";
-    this.audio.load();
+    this.initiateDialerTone();
   }
 
   initiateCall(){
@@ -41,18 +42,19 @@ export class HomeComponent implements OnInit {
 
     this.meetingPayload.meetingId = "test";
     this.meetingPayload.attendeeName = "doctor";
+    this.meetingPayload.client = "web";
 
     this.meetingService.initiateMeeting(this.meetingPayload).subscribe(
       async response => {
 
-        this.spinner.hide();
-
         if(response.body != null){
+
           await this.initiateDeviceControls(response.body);
         }
       },
         error => {
           this.spinner.hide();
+          this.toastr.error('Please try again!');
       }
     );
   }
@@ -98,8 +100,9 @@ export class HomeComponent implements OnInit {
         }
 
         this.callSession.bindVideoElement(2, videoElementRemote);
-        this.toastr.success("Video Call Started!");
         this.stopDialerTone();
+        this.spinner.hide();
+        this.toastr.success("Video Call Started!");
       }
     };
 
@@ -116,13 +119,21 @@ export class HomeComponent implements OnInit {
     $("#callModal").modal('hide');
   }
 
+  private initiateDialerTone(){
+
+    this.dialerAudio = new Audio();
+    this.dialerAudio.src = environment.DIALER_TONE_PATH;
+    this.dialerAudio.load();
+
+  }
+
   private playDialerTone(){
 
-    this.audio.play();
+    this.dialerAudio.play();
   }
 
   private stopDialerTone(){
 
-    this.audio.pause();
+    this.dialerAudio.pause();
   }
 }
