@@ -6,6 +6,7 @@ import {NgxSpinnerService} from "ngx-spinner";
 import {MeetingResponse} from "../dto/response/meeting-response";
 import {ConsoleLogger, DefaultDeviceController, DefaultMeetingSession, LogLevel, MeetingSessionConfiguration} from 'amazon-chime-sdk-js';
 import {environment} from "../../environments/environment";
+import {Howl, Howler} from 'howler';
 declare var $: any;
 
 @Component({
@@ -121,9 +122,12 @@ export class HomeComponent implements OnInit {
 
   private initiateDialerTone(){
 
-    this.dialerAudio = new Audio();
-    this.dialerAudio.src = environment.DIALER_TONE_PATH;
-    this.dialerAudio.load();
+    this.dialerAudio = new Howl({
+      src: [environment.DIALER_TONE_PATH],
+      autoplay: true,
+      loop: true,
+      volume: 0.5
+    });
 
   }
 
@@ -134,6 +138,6 @@ export class HomeComponent implements OnInit {
 
   private stopDialerTone(){
 
-    this.dialerAudio.pause();
+    this.dialerAudio.stop();
   }
 }
