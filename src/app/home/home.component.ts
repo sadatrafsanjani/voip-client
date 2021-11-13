@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit {
   private callSession: any;
   private dialerAudio: any;
   private ringAudio: any;
+  private meetingResponse: MeetingResponse;
 
   constructor(private notificationService: NotificationService,
               private meetingService: MeetingService,
@@ -31,6 +32,10 @@ export class HomeComponent implements OnInit {
       attendeeName: '',
       client: ''
     };
+
+    this.meetingResponse = {
+      JoinInfo: null
+    }
   }
 
   ngOnInit(): void {
@@ -49,7 +54,8 @@ export class HomeComponent implements OnInit {
 
       if(response){
 
-        console.log(JSON.parse(response.data.JoinInfo));
+        this.meetingResponse.JoinInfo = JSON.parse(response.data.JoinInfo);
+        console.log(this.meetingResponse);
         this.openCallModal();
       }
     });
@@ -133,12 +139,6 @@ export class HomeComponent implements OnInit {
     this.callSession.addObserver(observer);
   }
 
-  public openCallModal() {
-
-    this.playRingTone();
-    $("#callModal").modal('show');
-  }
-
   private initiateDialerTone(){
 
     this.dialerAudio = new Howl({
@@ -177,5 +177,29 @@ export class HomeComponent implements OnInit {
   public stopRingTone(){
 
     this.ringAudio.stop();
+  }
+
+  private openCallModal() {
+
+    this.playRingTone();
+    $("#callModal").modal('show');
+  }
+
+  public acceptCall(){
+
+    this.stopRingTone();
+    $("#callModal").modal('hide');
+
+    if(this.meetingResponse){
+
+      this.initiateDeviceControls(this.meetingResponse);
+    }
+  }
+
+  public rejectCall(){
+
+    this.stopRingTone();
+    $("#callModal").modal('hide');
+    this.meetingResponse = null;
   }
 }
