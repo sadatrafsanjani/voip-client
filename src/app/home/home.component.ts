@@ -7,6 +7,7 @@ import {MeetingResponse} from "../dto/response/meeting-response";
 import {ConsoleLogger, DefaultDeviceController, DefaultMeetingSession, LogLevel, MeetingSessionConfiguration} from 'amazon-chime-sdk-js';
 import {environment} from "../../environments/environment";
 import {Howl} from 'howler';
+import {NotificationService} from "../service/notification.service";
 declare var $: any;
 
 @Component({
@@ -19,9 +20,10 @@ export class HomeComponent implements OnInit {
   private meetingPayload!: MeetingPayload;
   private callSession: any;
   private dialerAudio: any;
-  private ringerAudio: any;
+  private ringAudio: any;
 
-  constructor(private meetingService: MeetingService,
+  constructor(private notificationService: NotificationService,
+              private meetingService: MeetingService,
               private toastr: ToastrService,
               private spinner: NgxSpinnerService) {
     this.meetingPayload = {
@@ -34,6 +36,23 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
 
     this.initiateDialerTone();
+    this.initiateRingTone();
+    this.senseCallNotification();
+  }
+
+  private senseCallNotification(){
+
+    this.notificationService.requestPermission();
+    this.notificationService.receiveMessage();
+
+    this.notificationService.$behaviorSubjectChange.subscribe(response => {
+
+      if(response){
+
+        console.log(JSON.parse(response.data.JoinInfo));
+        this.openCallModal();
+      }
+    });
   }
 
   openCallingWindow() {
@@ -114,14 +133,10 @@ export class HomeComponent implements OnInit {
     this.callSession.addObserver(observer);
   }
 
-  private openCallModal() {
+  public openCallModal() {
 
+    this.playRingTone();
     $("#callModal").modal('show');
-  }
-
-  private closeCallModal() {
-
-    $("#callModal").modal('hide');
   }
 
   private initiateDialerTone(){
@@ -132,7 +147,16 @@ export class HomeComponent implements OnInit {
       loop: true,
       volume: 0.5
     });
+  }
 
+  private initiateRingTone(){
+
+    this.ringAudio = new Howl({
+      src: [environment.RING_TONE_PATH],
+      autoplay: false,
+      loop: true,
+      volume: 0.5
+    });
   }
 
   private playDialerTone(){
@@ -143,5 +167,15 @@ export class HomeComponent implements OnInit {
   private stopDialerTone(){
 
     this.dialerAudio.stop();
+  }
+
+  private playRingTone(){
+
+    this.ringAudio.play();
+  }
+
+  public stopRingTone(){
+
+    this.ringAudio.stop();
   }
 }
