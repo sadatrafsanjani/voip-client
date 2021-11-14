@@ -143,7 +143,8 @@ export class HomeComponent implements OnInit {
         const sessionStatusCode = sessionStatus.statusCode();
 
         if (sessionStatusCode === MeetingSessionStatusCode.MeetingEnded) {
-          this.toastr.info("Meeting ended!");
+
+          this.toastr.info("Call ended!");
         } else {
           console.log('Stopped with a session status code: ', sessionStatusCode);
         }
@@ -222,8 +223,12 @@ export class HomeComponent implements OnInit {
     window.open('/call', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
   }
 
-  stopMeeting(){
+  endCall(){
 
-    this.callSession.stop();
+    if(this.callSession){
+
+      this.callSession.stop();
+      this.toastr.info("Call ended!");
+    }
   }
 }
