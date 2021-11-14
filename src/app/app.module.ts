@@ -13,10 +13,7 @@ import {AngularFireDatabaseModule} from "@angular/fire/compat/database";
 import {AngularFireMessagingModule} from "@angular/fire/compat/messaging";
 import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {AngularFireModule} from "@angular/fire/compat";
-import {AsyncPipe} from "@angular/common";
-import {NotificationService} from "./service/notification.service";
-import {MeetingService} from "./service/meeting.service";
-
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -40,6 +37,7 @@ import {MeetingService} from "./service/meeting.service";
         preventDuplicates: true
       }
     ),
+    FontAwesomeModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],

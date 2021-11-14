@@ -4,10 +4,11 @@ import {MeetingPayload} from "../dto/payload/meeting-payload";
 import {ToastrService} from "ngx-toastr";
 import {NgxSpinnerService} from "ngx-spinner";
 import {MeetingResponse} from "../dto/response/meeting-response";
-import {ConsoleLogger, DefaultDeviceController, DefaultMeetingSession, LogLevel, MeetingSessionConfiguration} from 'amazon-chime-sdk-js';
+import {MeetingSessionStatusCode, ConsoleLogger, DefaultDeviceController, DefaultMeetingSession, LogLevel, MeetingSessionConfiguration} from 'amazon-chime-sdk-js';
 import {environment} from "../../environments/environment";
 import {Howl} from 'howler';
 import {NotificationService} from "../service/notification.service";
+import { faPhone, faPhoneSlash, faCamera, faMicrophone } from '@fortawesome/free-solid-svg-icons';
 declare var $: any;
 
 @Component({
@@ -16,6 +17,11 @@ declare var $: any;
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+
+  faCamera = faCamera;
+  faMicrophone = faMicrophone;
+  faPhone = faPhone;
+  faPhoneSlash = faPhoneSlash;
 
   private meetingPayload!: MeetingPayload;
   private callSession: any;
@@ -27,6 +33,7 @@ export class HomeComponent implements OnInit {
               private meetingService: MeetingService,
               private toastr: ToastrService,
               private spinner: NgxSpinnerService) {
+
     this.meetingPayload = {
       meetingId: '',
       attendeeName: '',
@@ -55,14 +62,9 @@ export class HomeComponent implements OnInit {
       if(response){
 
         this.meetingResponse.JoinInfo = JSON.parse(response.data.JoinInfo);
-        console.log(this.meetingResponse);
         this.openCallModal();
       }
     });
-  }
-
-  openCallingWindow() {
-    window.open('/call', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
   }
 
   initiateCall(){
@@ -124,6 +126,7 @@ export class HomeComponent implements OnInit {
     this.callSession.start();
 
     const observer = {
+
       videoTileDidUpdate: tileState => {
         if (!tileState.boundAttendeeId || tileState.localTile || tileState.isContent) {
           return;
@@ -133,7 +136,19 @@ export class HomeComponent implements OnInit {
         this.stopDialerTone();
         this.spinner.hide();
         this.toastr.success("Video Call Started!");
+      },
+
+      audioVideoDidStop: sessionStatus => {
+
+        const sessionStatusCode = sessionStatus.statusCode();
+
+        if (sessionStatusCode === MeetingSessionStatusCode.MeetingEnded) {
+          this.toastr.info("Meeting ended!");
+        } else {
+          console.log('Stopped with a session status code: ', sessionStatusCode);
+        }
       }
+
     };
 
     this.callSession.addObserver(observer);
@@ -201,5 +216,14 @@ export class HomeComponent implements OnInit {
     this.stopRingTone();
     $("#callModal").modal('hide');
     this.meetingResponse = null;
+  }
+
+  openCallingWindow() {
+    window.open('/call', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+  }
+
+  stopMeeting(){
+
+    this.callSession.stop();
   }
 }
