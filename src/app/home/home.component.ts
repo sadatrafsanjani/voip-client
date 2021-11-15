@@ -29,6 +29,8 @@ export class HomeComponent implements OnInit {
   private ringAudio: any;
   private meetingResponse: MeetingResponse;
 
+  attendeePresenceSet = new Set();
+
   constructor(private notificationService: NotificationService,
               private meetingService: MeetingService,
               private toastr: ToastrService,
@@ -109,6 +111,17 @@ export class HomeComponent implements OnInit {
 
     this.callSession = meetingSession.audioVideo;
 
+    const callback = (presentAttendeeId, present) => {
+      if (present) {
+        this.attendeePresenceSet.add(presentAttendeeId);
+      } else {
+        this.attendeePresenceSet.delete(presentAttendeeId);
+        this.endCall();
+      }
+    };
+
+    this.callSession.realtimeSubscribeToAttendeeIdPresence(callback);
+
     await this.callSession.chooseAudioInputDevice(audioInputDeviceInfo.deviceId);
 
     const audioOutputDeviceInfo = audioOutputDevices[0];
@@ -129,6 +142,7 @@ export class HomeComponent implements OnInit {
 
       videoTileDidUpdate: tileState => {
         if (!tileState.boundAttendeeId || tileState.localTile || tileState.isContent) {
+
           return;
         }
 
@@ -149,7 +163,6 @@ export class HomeComponent implements OnInit {
           console.log('Stopped with a session status code: ', sessionStatusCode);
         }
       }
-
     };
 
     this.callSession.addObserver(observer);
