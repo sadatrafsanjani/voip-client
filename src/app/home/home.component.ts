@@ -229,9 +229,12 @@ export class HomeComponent implements OnInit {
 
   public rejectCall(){
 
-    this.stopRingTone();
-    $("#callModal").modal('hide');
-    this.meetingResponse = null;
+    if(this.callSession){
+
+      this.stopRingTone();
+      $("#callModal").modal('hide');
+      this.meetingResponse = null;
+    }
   }
 
   openCallingWindow() {
@@ -269,5 +272,14 @@ export class HomeComponent implements OnInit {
 
       return this.callSession.realtimeIsLocalAudioMuted();
     }
+  }
+
+  test(){
+
+    if(this.callSession){
+
+      this.callSession.stopLocalVideoTile();
+    }
+
   }
 }
