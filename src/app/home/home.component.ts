@@ -8,7 +8,7 @@ import {MeetingSessionStatusCode, ConsoleLogger, DefaultDeviceController, Defaul
 import {environment} from "../../environments/environment";
 import {Howl} from 'howler';
 import {NotificationService} from "../service/notification.service";
-import { faPhone, faPhoneSlash, faCamera, faMicrophone } from '@fortawesome/free-solid-svg-icons';
+import { faPhone, faPhoneSlash, faCamera, faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 declare var $: any;
 
 @Component({
@@ -22,6 +22,8 @@ export class HomeComponent implements OnInit {
   faMicrophone = faMicrophone;
   faPhone = faPhone;
   faPhoneSlash = faPhoneSlash;
+  faMicrophoneSlash = faMicrophoneSlash;
+  flag: boolean = false;
 
   private meetingPayload!: MeetingPayload;
   private callSession: any;
@@ -111,17 +113,6 @@ export class HomeComponent implements OnInit {
 
     this.callSession = meetingSession.audioVideo;
 
-    const callback = (presentAttendeeId, present) => {
-      if (present) {
-        this.attendeePresenceSet.add(presentAttendeeId);
-      } else {
-        this.attendeePresenceSet.delete(presentAttendeeId);
-        this.endCall();
-      }
-    };
-
-    this.callSession.realtimeSubscribeToAttendeeIdPresence(callback);
-
     await this.callSession.chooseAudioInputDevice(audioInputDeviceInfo.deviceId);
 
     const audioOutputDeviceInfo = audioOutputDevices[0];
@@ -166,6 +157,17 @@ export class HomeComponent implements OnInit {
     };
 
     this.callSession.addObserver(observer);
+
+    const callback = (presentAttendeeId, present) => {
+      if (present) {
+        this.attendeePresenceSet.add(presentAttendeeId);
+      } else {
+        this.attendeePresenceSet.delete(presentAttendeeId);
+        this.endCall();
+      }
+    };
+
+    this.callSession.realtimeSubscribeToAttendeeIdPresence(callback);
   }
 
   private initiateDialerTone(){
@@ -221,7 +223,7 @@ export class HomeComponent implements OnInit {
 
     if(this.meetingResponse){
 
-      this.initiateDeviceControls(this.meetingResponse);
+      this.initiateDeviceControls(this.meetingResponse).then();
     }
   }
 
@@ -243,5 +245,18 @@ export class HomeComponent implements OnInit {
       this.callSession.stop();
       this.toastr.info("Call ended!");
     }
+  }
+
+  muteAudio(){
+
+    this.flag = true;
+    this.callSession.realtimeMuteLocalAudio();
+    this.toastr.info("Audio mute!");
+  }
+
+  unmuteAudio(){
+
+    this.callSession.realtimeUnmuteLocalAudio();
+    this.toastr.info("Audio unmute!");
   }
 }
