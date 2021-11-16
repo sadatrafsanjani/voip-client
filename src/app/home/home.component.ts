@@ -23,7 +23,6 @@ export class HomeComponent implements OnInit {
   faPhone = faPhone;
   faPhoneSlash = faPhoneSlash;
   faMicrophoneSlash = faMicrophoneSlash;
-  flag: boolean = false;
 
   private meetingPayload!: MeetingPayload;
   private callSession: any;
@@ -65,9 +64,10 @@ export class HomeComponent implements OnInit {
 
       if(response){
 
-        this.meetingResponse.JoinInfo = JSON.parse(response.data.JoinInfo);
+        this.meetingResponse.JoinInfo = JSON.parse(response.data.data).JoinInfo;
         this.openCallModal();
       }
+
     });
   }
 
@@ -247,16 +247,27 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  muteAudio(){
+  controlAudioDevice(){
 
-    this.flag = true;
-    this.callSession.realtimeMuteLocalAudio();
-    this.toastr.info("Audio mute!");
+    if(this.callSession){
+
+      const state = this.callSession.realtimeIsLocalAudioMuted();
+
+      if (!state) {
+        this.callSession.realtimeMuteLocalAudio();
+        this.toastr.info("Audio muted!");
+      } else {
+        this.callSession.realtimeUnmuteLocalAudio();
+        this.toastr.info("Audio unmuted!");
+      }
+    }
   }
 
-  unmuteAudio(){
+  getAudioDeviceState(){
 
-    this.callSession.realtimeUnmuteLocalAudio();
-    this.toastr.info("Audio unmute!");
+    if(this.callSession){
+
+      return this.callSession.realtimeIsLocalAudioMuted();
+    }
   }
 }
