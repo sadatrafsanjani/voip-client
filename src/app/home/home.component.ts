@@ -38,14 +38,13 @@ export class HomeComponent implements OnInit {
               private spinner: NgxSpinnerService) {
 
     this.meetingPayload = {
-      meetingId: '',
       attendeeName: '',
-      client: ''
+      phoneNo: ''
     };
 
     this.meetingResponse = {
       JoinInfo: null
-    }
+    };
   }
 
   ngOnInit(): void {
@@ -76,9 +75,8 @@ export class HomeComponent implements OnInit {
     this.spinner.show();
     this.playDialerTone();
 
-    this.meetingPayload.meetingId = "test";
     this.meetingPayload.attendeeName = "doctor";
-    this.meetingPayload.client = "web";
+    this.meetingPayload.phoneNo = "01799554639";
 
     this.meetingService.initiateMeeting(this.meetingPayload).subscribe(
       async response => {
@@ -229,12 +227,9 @@ export class HomeComponent implements OnInit {
 
   public rejectCall(){
 
-    if(this.callSession){
-
-      this.stopRingTone();
-      $("#callModal").modal('hide');
-      this.meetingResponse = null;
-    }
+    this.stopRingTone();
+    $("#callModal").modal('hide');
+    this.meetingResponse = null;
   }
 
   openCallingWindow() {
@@ -274,7 +269,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  test(){
+  stopVideo(){
 
     if(this.callSession){
 
