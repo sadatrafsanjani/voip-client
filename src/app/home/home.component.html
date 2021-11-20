@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="row" style="height: 100%;">
-    <div class="col-md-12 mt-3">
+    <div class="col-md-12">
       <div class="card bg-dark">
         <video id="video-preview-remote" class="card-img-top" style="height: 58rem;"></video>
         <div class="card-img-overlay">
@@ -14,7 +14,7 @@
               <fa-icon [icon]="faMicrophoneSlash" size="lg" *ngIf="getAudioDeviceState()"></fa-icon>
             </button>
             <button class="btn btn-outline-danger me-3" style="border-radius: 100%;" (click)="endCall()"><fa-icon [icon]="faPhoneSlash" size="lg"></fa-icon></button>
-            <button class="btn btn-outline-success" style="border-radius: 100%;" (click)="initiateCall()"><fa-icon [icon]="faPhone" size="lg"></fa-icon></button>
+            <button class="btn btn-outline-success" style="border-radius: 100%;" (click)="startCall()"><fa-icon [icon]="faPhone" size="lg"></fa-icon></button>
           </div>
         </div>
       </div>
@@ -30,7 +30,6 @@
         <h5 class="modal-title">Video Call</h5>
       </div>
       <div class="modal-body">
-
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="rejectCall()">Reject</button>
@@ -39,7 +38,6 @@
     </div>
   </div>
 </div>
-
 
 
 <ngx-spinner

@@ -4,6 +4,7 @@ import {environment} from "../../environments/environment";
 import {Observable} from "rxjs";
 import {MeetingPayload} from "../dto/payload/meeting-payload";
 import {MeetingResponse} from "../dto/response/meeting-response";
+import {timeout} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'

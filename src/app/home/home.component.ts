@@ -38,8 +38,8 @@ export class HomeComponent implements OnInit {
               private spinner: NgxSpinnerService) {
 
     this.meetingPayload = {
-      attendeeName: '',
-      phoneNo: ''
+      attendeeName: 'doctor',
+      phoneNo: '01734811761'
     };
 
     this.meetingResponse = {
@@ -70,25 +70,30 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  initiateCall(){
+  startCall(){
 
     this.spinner.show();
     this.playDialerTone();
-
-    this.meetingPayload.attendeeName = "doctor";
-    this.meetingPayload.phoneNo = "01799554639";
 
     this.meetingService.initiateMeeting(this.meetingPayload).subscribe(
       async response => {
 
         if(response.body != null){
 
+          setInterval(()=>{
+
+            if(this.attendeePresenceSet.size < 2){
+              this.endCall();
+            }
+
+          }, 10000);
+
           await this.initiateDeviceControls(response.body);
         }
       },
-        error => {
-          this.spinner.hide();
-          this.toastr.error('Please try again!');
+      error => {
+        this.spinner.hide();
+        this.toastr.error('Please try again!');
       }
     );
   }
@@ -131,7 +136,6 @@ export class HomeComponent implements OnInit {
 
       videoTileDidUpdate: tileState => {
         if (!tileState.boundAttendeeId || tileState.localTile || tileState.isContent) {
-
           return;
         }
 
@@ -242,6 +246,8 @@ export class HomeComponent implements OnInit {
 
       this.callSession.stop();
       this.toastr.info("Call ended!");
+      this.stopDialerTone();
+      this.spinner.hide();
     }
   }
 
@@ -275,6 +281,5 @@ export class HomeComponent implements OnInit {
 
       this.callSession.stopLocalVideoTile();
     }
-
   }
 }
