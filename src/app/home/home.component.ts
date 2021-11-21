@@ -8,7 +8,7 @@ import {MeetingSessionStatusCode, ConsoleLogger, DefaultDeviceController, Defaul
 import {environment} from "../../environments/environment";
 import {Howl} from 'howler';
 import {NotificationService} from "../service/notification.service";
-import { faPhone, faPhoneSlash, faCamera, faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
+import { faPhone, faPhoneSlash, faCamera, faMicrophone, faMicrophoneSlash, faSms } from '@fortawesome/free-solid-svg-icons';
 declare var $: any;
 
 @Component({
@@ -23,6 +23,7 @@ export class HomeComponent implements OnInit {
   faPhone = faPhone;
   faPhoneSlash = faPhoneSlash;
   faMicrophoneSlash = faMicrophoneSlash;
+  faSms = faSms;
 
   private meetingPayload!: MeetingPayload;
   private callSession: any;
