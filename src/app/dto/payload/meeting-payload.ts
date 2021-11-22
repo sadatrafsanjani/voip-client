@@ -1,5 +1,6 @@
 export class MeetingPayload {
 
   attendeeName!: string;
-  phoneNo!: string;
+  senderPhoneNo!: string;
+  receiverPhoneNo!: string;
 }

@@ -8,7 +8,7 @@ import {MeetingSessionStatusCode, ConsoleLogger, DefaultDeviceController, Defaul
 import {environment} from "../../environments/environment";
 import {Howl} from 'howler';
 import {NotificationService} from "../service/notification.service";
-import { faPhone, faPhoneSlash, faCamera, faMicrophone, faMicrophoneSlash, faSms } from '@fortawesome/free-solid-svg-icons';
+import { faPhone, faPhoneSlash, faCamera, faMicrophone, faMicrophoneSlash, faSms, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 declare var $: any;
 
 @Component({
@@ -24,14 +24,14 @@ export class HomeComponent implements OnInit {
   faPhoneSlash = faPhoneSlash;
   faMicrophoneSlash = faMicrophoneSlash;
   faSms = faSms;
+  faPaperPlane = faPaperPlane;
 
   private meetingPayload!: MeetingPayload;
   private callSession: any;
   private dialerAudio: any;
   private ringAudio: any;
   private meetingResponse: MeetingResponse;
-
-  attendeePresenceSet = new Set();
+  private attendeePresenceSet = new Set();
 
   constructor(private notificationService: NotificationService,
               private meetingService: MeetingService,
@@ -40,7 +40,8 @@ export class HomeComponent implements OnInit {
 
     this.meetingPayload = {
       attendeeName: 'doctor',
-      phoneNo: '01734811761'
+      senderPhoneNo: '01799554639',
+      receiverPhoneNo: '01734811761'
     };
 
     this.meetingResponse = {
@@ -87,7 +88,7 @@ export class HomeComponent implements OnInit {
               this.endCall();
             }
 
-          }, 10000);
+          }, 15000);
 
           await this.initiateDeviceControls(response.body);
         }
@@ -235,10 +236,6 @@ export class HomeComponent implements OnInit {
     this.stopRingTone();
     $("#callModal").modal('hide');
     this.meetingResponse = null;
-  }
-
-  openCallingWindow() {
-    window.open('/call', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
   }
 
   endCall(){

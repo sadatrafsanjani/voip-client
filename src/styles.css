@@ -11273,7 +11273,7 @@ textarea.form-control-lg {
 }
 
 #sidebar-wrapper .list-group {
-  width: 28rem;
+  width: 34rem;
 }
 
 #page-content-wrapper {
@@ -11295,6 +11295,6 @@ body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
   }
 
   body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
-    margin-left: -28rem;
+    margin-left: -34rem;
   }
 }
