@@ -1,5 +1,7 @@
 export const environment = {
   BASE_API_URL: 'http://localhost:8080/api',
+  DIALER_TONE_PATH: '../../assets/audio/dialer-tone.wav',
+  RING_TONE_PATH: '../../assets/audio/ring-tone.wav',
   production: true,
   firebaseConfig: {
     apiKey: "AIzaSyAT9pdOV03_g00fARjZV1dkU5c3bRDRk-c",

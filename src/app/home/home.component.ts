@@ -25,6 +25,7 @@ export class HomeComponent implements OnInit {
   faMicrophoneSlash = faMicrophoneSlash;
   faSms = faSms;
   faPaperPlane = faPaperPlane;
+  callButtonFlag: boolean = true;
 
   private meetingPayload!: MeetingPayload;
   private callSession: any;
@@ -45,6 +46,7 @@ export class HomeComponent implements OnInit {
     };
 
     this.meetingResponse = {
+      callerNo: '',
       JoinInfo: null
     };
   }
@@ -53,20 +55,29 @@ export class HomeComponent implements OnInit {
 
     this.initiateDialerTone();
     this.initiateRingTone();
-    this.senseCallNotification();
+    this.senseNotification();
   }
 
-  private senseCallNotification(){
+  private senseNotification(){
 
     this.notificationService.requestPermission();
     this.notificationService.receiveMessage();
 
-    this.notificationService.$behaviorSubjectChange.subscribe(response => {
+    this.notificationService.$behaviorSubjectChange.subscribe(async response => {
 
       if(response){
 
-        this.meetingResponse.JoinInfo = JSON.parse(response.data.data).JoinInfo;
-        this.openCallModal();
+        const notification = await response.data.action;
+
+        if(notification === "INCOMING_CALL"){
+
+          this.meetingResponse.JoinInfo = await JSON.parse(response.data.data).JoinInfo;
+          this.meetingResponse.callerNo = await response.data.callerNo;
+          this.openCallModal();
+        }
+        else if(notification === "REJECT_CALL"){
+          this.rejectCall();
+        }
       }
 
     });
@@ -74,11 +85,12 @@ export class HomeComponent implements OnInit {
 
   startCall(){
 
+    this.callButtonFlag = false;
     this.spinner.show();
     this.playDialerTone();
+    this.meetingResponse.callerNo = this.meetingPayload.receiverPhoneNo;
 
-    this.meetingService.initiateMeeting(this.meetingPayload).subscribe(
-      async response => {
+    this.meetingService.initiateCall(this.meetingPayload).subscribe(async response => {
 
         if(response.body != null){
 
@@ -233,9 +245,14 @@ export class HomeComponent implements OnInit {
 
   public rejectCall(){
 
-    this.stopRingTone();
-    $("#callModal").modal('hide');
-    this.meetingResponse = null;
+    this.meetingService.rejectCall(this.meetingResponse.callerNo).subscribe(() => {
+
+      this.stopRingTone();
+      $("#callModal").modal('hide');
+      this.callButtonFlag = true;
+      this.meetingResponse = null;
+      this.toastr.info("Call ended!");
+    });
   }
 
   endCall(){
@@ -243,10 +260,16 @@ export class HomeComponent implements OnInit {
     if(this.callSession){
 
       this.callSession.stop();
-      this.toastr.info("Call ended!");
+    }
+
+    this.meetingService.rejectCall(this.meetingResponse.callerNo).subscribe(() => {
+
       this.stopDialerTone();
       this.spinner.hide();
-    }
+      this.callButtonFlag = true;
+      this.meetingResponse = null;
+      this.toastr.info("Call ended!");
+    });
   }
 
   controlAudioDevice(){
