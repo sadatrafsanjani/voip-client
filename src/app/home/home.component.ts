@@ -76,7 +76,7 @@ export class HomeComponent implements OnInit {
           this.openCallModal();
         }
         else if(notification === "REJECT_CALL"){
-          this.rejectCall();
+          this.rejectedCall();
         }
       }
 
@@ -94,13 +94,7 @@ export class HomeComponent implements OnInit {
 
         if(response.body != null){
 
-          setInterval(()=>{
-
-            if(this.attendeePresenceSet.size < 2){
-              this.endCall();
-            }
-
-          }, 15000);
+          //this.autoDisconnectCall();
 
           await this.initiateDeviceControls(response.body);
         }
@@ -110,6 +104,17 @@ export class HomeComponent implements OnInit {
         this.toastr.error('Please try again!');
       }
     );
+  }
+
+  private autoDisconnectCall(){
+
+    setInterval(()=>{
+
+      if(this.attendeePresenceSet.size < 2){
+        this.endCall();
+      }
+
+    }, 15000);
   }
 
   private async initiateDeviceControls(response: MeetingResponse) {
@@ -243,24 +248,31 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  private rejectedCall(){
+
+    this.spinner.hide();
+    this.stopDialerTone();
+    $("#callModal").modal('hide');
+    this.callButtonFlag = true;
+    this.meetingResponse = null;
+    this.callSession.stopLocalVideoTile();
+    this.toastr.info("Caller rejected call!");
+  }
+
   public rejectCall(){
 
     this.meetingService.rejectCall(this.meetingResponse.callerNo).subscribe(() => {
 
+      this.spinner.hide();
       this.stopRingTone();
       $("#callModal").modal('hide');
       this.callButtonFlag = true;
       this.meetingResponse = null;
-      this.toastr.info("Call ended!");
+      this.toastr.info("You declined call!");
     });
   }
 
   endCall(){
-
-    if(this.callSession){
-
-      this.callSession.stop();
-    }
 
     this.meetingService.rejectCall(this.meetingResponse.callerNo).subscribe(() => {
 
@@ -268,6 +280,7 @@ export class HomeComponent implements OnInit {
       this.spinner.hide();
       this.callButtonFlag = true;
       this.meetingResponse = null;
+      this.callSession.stopLocalVideoTile();
       this.toastr.info("Call ended!");
     });
   }

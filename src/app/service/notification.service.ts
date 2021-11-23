@@ -28,7 +28,7 @@ export class NotificationService {
   receiveMessage() {
 
     this.angularFireMessaging.messages.subscribe((payload) => {
-        //console.log(payload);
+        console.log(payload);
         this.behaviorSubject.next(payload);
       });
   }
