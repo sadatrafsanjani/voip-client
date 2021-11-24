@@ -71,9 +71,12 @@ export class HomeComponent implements OnInit {
 
         if(notification === "INCOMING_CALL"){
 
-          this.meetingResponse.JoinInfo = await JSON.parse(response.data.data).JoinInfo;
-          this.meetingResponse.callerNo = await response.data.callerNo;
-          this.openCallModal();
+          if(this.meetingResponse.JoinInfo == null){
+
+            this.meetingResponse.JoinInfo = await JSON.parse(response.data.data).JoinInfo;
+            this.meetingResponse.callerNo = await response.data.callerNo;
+            this.openCallModal();
+          }
         }
         else if(notification === "REJECT_CALL"){
           this.rejectedCall();
@@ -254,8 +257,8 @@ export class HomeComponent implements OnInit {
     this.stopDialerTone();
     $("#callModal").modal('hide');
     this.callButtonFlag = true;
-    this.meetingResponse = null;
-    this.callSession.stopLocalVideoTile();
+    this.meetingResponse.JoinInfo = null;
+    this.meetingResponse.callerNo = '';
     this.toastr.info("Caller rejected call!");
   }
 
@@ -267,7 +270,8 @@ export class HomeComponent implements OnInit {
       this.stopRingTone();
       $("#callModal").modal('hide');
       this.callButtonFlag = true;
-      this.meetingResponse = null;
+      this.meetingResponse.JoinInfo = null;
+      this.meetingResponse.callerNo = '';
       this.toastr.info("You declined call!");
     });
   }
