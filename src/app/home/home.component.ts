@@ -97,8 +97,7 @@ export class HomeComponent implements OnInit {
 
         if(response.body != null){
 
-          //this.autoDisconnectCall();
-
+          this.autoDisconnectCall();
           await this.initiateDeviceControls(response.body);
         }
       },
@@ -247,19 +246,23 @@ export class HomeComponent implements OnInit {
 
     if(this.meetingResponse){
 
+      this.callButtonFlag = false;
       this.initiateDeviceControls(this.meetingResponse).then();
     }
   }
 
   private rejectedCall(){
 
-    this.spinner.hide();
-    this.stopDialerTone();
-    $("#callModal").modal('hide');
-    this.callButtonFlag = true;
-    this.meetingResponse.JoinInfo = null;
-    this.meetingResponse.callerNo = '';
-    this.toastr.info("Caller rejected call!");
+    if(this.meetingResponse.JoinInfo != null){
+
+      this.spinner.hide();
+      this.stopDialerTone();
+      $("#callModal").modal('hide');
+      this.callButtonFlag = true;
+      this.meetingResponse.JoinInfo = null;
+      this.meetingResponse.callerNo = '';
+      this.toastr.info("Caller rejected call!");
+    }
   }
 
   public rejectCall(){
