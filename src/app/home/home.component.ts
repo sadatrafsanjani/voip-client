@@ -256,7 +256,7 @@ export class HomeComponent implements OnInit {
     if(this.meetingResponse.JoinInfo != null){
 
       this.spinner.hide();
-      this.stopDialerTone();
+      this.stopRingTone();
       $("#callModal").modal('hide');
       this.callButtonFlag = true;
       this.meetingResponse.JoinInfo = null;
@@ -288,6 +288,7 @@ export class HomeComponent implements OnInit {
       this.callButtonFlag = true;
       this.meetingResponse = null;
       this.callSession.stopLocalVideoTile();
+      this.callSession.stop();
       this.toastr.info("Call ended!");
     });
   }
