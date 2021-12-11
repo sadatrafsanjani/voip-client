@@ -14,12 +14,14 @@ import {AngularFireMessagingModule} from "@angular/fire/compat/messaging";
 import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {AngularFireModule} from "@angular/fire/compat";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { AppointmentComponent } from './appointment/appointment.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    CallComponent
+    CallComponent,
+    AppointmentComponent
   ],
   imports: [
     BrowserModule,
