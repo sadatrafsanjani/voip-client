@@ -1,5 +1,5 @@
 export const environment = {
-  BASE_API_URL: 'http://voip.jotno.dev/api',
+  BASE_API_URL: 'https://voip.jotno.dev/api',
   DIALER_TONE_PATH: '../../assets/audio/dialer-tone.wav',
   RING_TONE_PATH: '../../assets/audio/ring-tone.wav',
   production: true,
