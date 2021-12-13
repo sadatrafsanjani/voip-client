@@ -58,6 +58,7 @@
               </div>
               <div class="col-md-12 position-absolute bottom-0 text-center mb-3">
                 <button class="btn btn-outline-light me-3" style="border-radius: 100%;" (click)="stopVideo()"><fa-icon [icon]="faCamera" size="lg"></fa-icon></button>
+                <button class="btn btn-outline-light me-3" style="border-radius: 100%;" (click)="resumeVideo()"><fa-icon [icon]="faCameraRetro" size="lg"></fa-icon></button>
                 <button class="btn btn-outline-light me-3" style="border-radius: 100%;" (click)="controlAudioDevice()">
                   <fa-icon [icon]="faMicrophone" size="lg" *ngIf="!getAudioDeviceState()"></fa-icon>
                   <fa-icon [icon]="faMicrophoneSlash" size="lg" *ngIf="getAudioDeviceState()"></fa-icon>

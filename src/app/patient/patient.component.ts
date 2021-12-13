@@ -13,6 +13,7 @@ export class PatientComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.messageListener();
   }
 
   messageListener(){

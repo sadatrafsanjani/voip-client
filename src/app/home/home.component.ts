@@ -8,7 +8,7 @@ import {MeetingSessionStatusCode, ConsoleLogger, DefaultDeviceController, Defaul
 import {environment} from "../../environments/environment";
 import {Howl} from 'howler';
 import {NotificationService} from "../service/notification.service";
-import { faPhone, faPhoneSlash, faCamera, faMicrophone, faMicrophoneSlash, faSms, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faPhone, faPhoneSlash, faCamera, faMicrophone, faMicrophoneSlash, faSms, faPaperPlane, faCameraRetro } from '@fortawesome/free-solid-svg-icons';
 declare var $: any;
 
 @Component({
@@ -18,6 +18,7 @@ declare var $: any;
 })
 export class HomeComponent implements OnInit {
 
+  faCameraRetro = faCameraRetro;
   faCamera = faCamera;
   faMicrophone = faMicrophone;
   faPhone = faPhone;
@@ -33,6 +34,7 @@ export class HomeComponent implements OnInit {
   private ringAudio: any;
   private meetingResponse: MeetingResponse;
   private attendeePresenceSet = new Set();
+  private meetingSession: any;
 
   constructor(private notificationService: NotificationService,
               private meetingService: MeetingService,
@@ -127,15 +129,14 @@ export class HomeComponent implements OnInit {
     const meetingResponse = response.JoinInfo.Meeting;
     const attendeeResponse = response.JoinInfo.Attendee;
     const configuration = new MeetingSessionConfiguration(meetingResponse, attendeeResponse);
-    const meetingSession = new DefaultMeetingSession(configuration, logger, deviceController);
+    this.meetingSession = new DefaultMeetingSession(configuration, logger, deviceController);
 
-    const audioInputDevices = await meetingSession.audioVideo.listAudioInputDevices();
-    const audioOutputDevices = await meetingSession.audioVideo.listAudioOutputDevices();
-    const videoInputDevices = await meetingSession.audioVideo.listVideoInputDevices();
-
+    const audioInputDevices = await this.meetingSession.audioVideo.listAudioInputDevices();
+    const audioOutputDevices = await this.meetingSession.audioVideo.listAudioOutputDevices();
+    const videoInputDevices = await this.meetingSession.audioVideo.listVideoInputDevices();
     const audioInputDeviceInfo = audioInputDevices[0];
 
-    this.callSession = meetingSession.audioVideo;
+    this.callSession = this.meetingSession.audioVideo;
 
     await this.callSession.chooseAudioInputDevice(audioInputDeviceInfo.deviceId);
 
@@ -287,6 +288,7 @@ export class HomeComponent implements OnInit {
       this.meetingResponse = null;
       this.callSession.stopLocalVideoTile();
       this.callSession.stop();
+      this.stopVideo();
       this.toastr.info("Call ended!");
     });
   }
@@ -320,6 +322,20 @@ export class HomeComponent implements OnInit {
     if(this.callSession){
 
       this.callSession.stopLocalVideoTile();
+      this.callSession.removeLocalVideoTile();
     }
+  }
+
+  async resumeVideo(){
+
+    const videoInputDevices = await this.meetingSession.audioVideo.listVideoInputDevices();
+    const videoInputDeviceInfo = videoInputDevices[0];
+    await this.callSession.chooseVideoInputDevice(videoInputDeviceInfo.deviceId);
+
+    const videoElementSelf = document.getElementById('video-preview-self') as HTMLVideoElement;
+    this.callSession.bindVideoElement(0, videoElementSelf);
+    this.callSession.startVideoPreviewForVideoInput(videoElementSelf);
+    this.callSession.startLocalVideoTile();
+    this.callSession.start();
   }
 }
