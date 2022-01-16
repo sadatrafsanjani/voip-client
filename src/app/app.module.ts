@@ -16,6 +16,7 @@ import {AngularFireModule} from "@angular/fire/compat";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NavigationComponent } from './navigation/navigation.component';
 import { PatientComponent } from './patient/patient.component';
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -25,24 +26,25 @@ import { PatientComponent } from './patient/patient.component';
     NavigationComponent,
     PatientComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    AngularFireDatabaseModule,
-    AngularFireAuthModule,
-    AngularFireMessagingModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
-    NgxSpinnerModule,
-    BrowserAnimationsModule,
-    ToastrModule.forRoot({
-        timeOut: 3000,
-        positionClass: 'toast-bottom-right',
-        preventDuplicates: true
-      }
-    ),
-    FontAwesomeModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        AngularFireDatabaseModule,
+        AngularFireAuthModule,
+        AngularFireMessagingModule,
+        AngularFireModule.initializeApp(environment.firebaseConfig),
+        NgxSpinnerModule,
+        BrowserAnimationsModule,
+        ToastrModule.forRoot({
+                timeOut: 3000,
+                positionClass: 'toast-bottom-right',
+                preventDuplicates: true
+            }
+        ),
+        FontAwesomeModule,
+        ReactiveFormsModule
+    ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],
   bootstrap: [AppComponent]

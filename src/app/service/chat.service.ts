@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {environment} from "../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {PatientResponse} from "../dto/response/patient-response";
+import {MessagePayload} from "../dto/payload/message-payload";
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +15,8 @@ export class ChatService {
 
   }
 
-  createMember(): Observable<any>{
+  sendMessage(payload: MessagePayload): Observable<any>{
 
-    return this.http.post<PatientResponse>(this.url + "/createMember", null, {observe: 'response'});
+    return this.http.post(this.url + "/sendMessage", payload, {observe: 'response'});
   }
 }

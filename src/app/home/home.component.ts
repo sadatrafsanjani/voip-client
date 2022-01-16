@@ -99,7 +99,7 @@ export class HomeComponent implements OnInit {
 
         if(response.body != null){
 
-          //this.autoDisconnectCall();
+          this.autoDisconnectCall();
           await this.initiateDeviceControls(response.body);
         }
       },
