@@ -3,7 +3,9 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {MessagePayload} from "../dto/payload/message-payload";
 import {ChatService} from "../service/chat.service";
-
+import {MessageResponse} from "../dto/response/message-response";
+import {RoomResponse} from "../dto/response/room-response";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-patient',
@@ -13,25 +15,30 @@ import {ChatService} from "../service/chat.service";
 export class PatientComponent implements OnInit {
 
   faPaperPlane = faPaperPlane;
-  channelArn = "arn:aws:chime:us-east-1:252894276123:app-instance/2d40b42c-3b41-41d0-b409-ea94f01a6982/channel/810d94bfae99a0d100f0e39316af0bc298c3fc5abfea24f8e982468cf72c4a72";
-  //userArn = "arn:aws:chime:us-east-1:252894276123:app-instance/2d40b42c-3b41-41d0-b409-ea94f01a6982/user/Doctor-101";
-  userArn = 'arn:aws:chime:us-east-1:252894276123:app-instance/2d40b42c-3b41-41d0-b409-ea94f01a6982/user/Patient-e815e518-50ae-460c-96aa-3f16a36deeec';
+  userArn!:string;
   chatForm: FormGroup;
   private messagePayload!: MessagePayload;
+  messages: Array<MessageResponse> = [];
 
-  constructor(private chatService: ChatService) { }
+  room: RoomResponse;
+
+  constructor(private chatService: ChatService,
+              private toastr: ToastrService) { }
 
   ngOnInit(): void {
+
+    this.getRoom();
+
     this.chatForm = new FormGroup({
       message: new FormControl('', [Validators.required, Validators.minLength(3)])
     });
 
     this.messagePayload = {
-      channelArn: this.channelArn,
-      userArn: this.userArn,
-      clientRequestToken: 'CLIENT-REQUEST-TOKEN-6f88fe4b-8b9a-4865-afdd-3023362f2f24',
+      channelArn: '',
+      userArn: '',
       content: ''
     };
+
   }
 
   get message() {
@@ -41,14 +48,35 @@ export class PatientComponent implements OnInit {
 
   sendMessage(){
 
+    this.messagePayload.channelArn = this.room.channelArn;
+    this.messagePayload.userArn = this.userArn;
     this.messagePayload.content = this.message.value;
 
     this.chatService.sendMessage(this.messagePayload).subscribe(response => {
       console.log(response);
     });
-
     this.chatForm.patchValue({message: ''});
   }
 
+  listMessage(){
+    this.chatService.listMessages(this.userArn, this.room.channelArn).subscribe(response => {
+      document.getElementById("#chatContent").innerHTML = "<li>"+ response+"</li>";
+    });
+  }
 
+  private getRoom(){
+    this.chatService.getRoom().subscribe(response => {
+      this.room = response;
+    });
+  }
+
+  doctor(){
+    this.userArn = this.room.doctorArn;
+    this.toastr.info("Doctor");
+  }
+
+  patient(){
+    this.userArn = this.room.patientArn;
+    this.toastr.info("Patient");
+  }
 }
