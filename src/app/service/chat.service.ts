@@ -17,8 +17,12 @@ export class ChatService {
 
   }
 
-  getRoom(): Observable<RoomResponse>{
-    return this.http.get<RoomResponse>(this.url + '/room/1');
+  getRoom(id: number): Observable<RoomResponse>{
+    return this.http.get<RoomResponse>(this.url + '/room/' + id);
+  }
+
+  getRooms(): Observable<RoomResponse[]>{
+    return this.http.get<RoomResponse[]>(this.url + '/rooms');
   }
 
   listMessages(userArn: String, channelArn: string): Observable<MessageResponse[]>{
